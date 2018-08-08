@@ -3,6 +3,7 @@ import React, { Component } from "react";
 
 import FrontPage from "./FrontPage";
 import SearchPage from "./SearchPage";
+import WordScreen from "./WordScreen";
 
 export default class Setup extends Component {
   constructor() {
@@ -28,7 +29,7 @@ export default class Setup extends Component {
       return <Expo.AppLoading />;
     }
     return (
-      <SearchPage />
+      <WordScreen />
     );
   }
 }
