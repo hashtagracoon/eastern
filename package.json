@@ -42,6 +42,7 @@
     "native-base": "2.5.2",
     "react": "16.3.1",
     "react-native": "0.55.4",
+    "react-native-fit-image": "^1.5.4",
     "react-native-sound": "^0.10.9",
     "react-navigation": "1.5.0",
     "stream": "0.0.2"

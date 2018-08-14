@@ -1,18 +1,25 @@
 const cheerio = require('cheerio-without-node-native');
-global.Buffer = global.Buffer || require('buffer').Buffer;
 
 module.exports = {
 
   parse: function(body) {
 
+    //console.log(body)
+
     let $ = cheerio.load(body);
 
     // main entry
-    $ = cheerio.load($(".entry-body").first().html());
+    try {
+      $ = cheerio.load($(".entry-body").first().html());
+    }
+    catch(err) {
+      console.log(err);
+      return [];
+    }
 
     let parts = [];
     $(".entry-body__el").each(function(i, elem) {
-      //console.log("part " + i + " :");
+      console.log("part " + i + " :");
 
       let obj = {};
 
@@ -53,14 +60,14 @@ module.exports = {
         //console.log("  > " + meaning);
         let meaningObj = {
           "meaning": meaning,
-          "eg": []
+          "egs": []
         };
 
         $(this).find("span.eg").each(function(k, elem) {
           //console.log("    > " + k);
           let eg = $(this).text();
           //console.log("    > " + eg);
-          meaningObj.eg.push(eg);
+          meaningObj.egs.push(eg);
         });
 
         obj.meanings.push(meaningObj);
@@ -98,6 +105,17 @@ module.exports = {
     }
 
     //console.log(parts);
-    return parts[0];
+    return parts;
+  },
+
+  parseImages: function(body) {
+    const $ = cheerio.load(body);
+    let arr = [];
+    $("div a img").slice(0, 3).each(function(i, elem) {
+      arr.push($(this).attr("src"));
+    });
+    console.log(arr);
+    return arr;
+
   }
 };
