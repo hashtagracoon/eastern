@@ -1,72 +1,87 @@
-const cheerio = require('cheerio-without-node-native');
+const cheerio = require("cheerio-without-node-native");
+
+const _debug = true;
+const logger = (output) => {
+  if(_debug) console.log(output);
+  else return;
+};
 
 module.exports = {
 
-  parse: function(body) {
-
-    //console.log(body)
+  parseCambridgeDictionary: function(body) {
 
     let $ = cheerio.load(body);
 
-    // main entry
     try {
+      // If have this word
       $ = cheerio.load($(".entry-body").first().html());
     }
     catch(err) {
-      console.log(err);
+      // If donn't have this word
+      logger(err);
       return [];
     }
 
-    let parts = [];
+    let entries = [];
     $(".entry-body__el").each(function(i, elem) {
-      console.log("part " + i + " :");
+      logger("entry " + i + " :");
 
       let obj = {};
 
+      // Get the word
       let title = $(this).find(".headword .hw").html();
-      //console.log(title);
+      // If it isn't a word, it could be a phrase
+      if(!title) title = $(this).find(".headword .phrase").html();
       obj.title = title;
 
-      let pron;
+
+      // Get KK pronuciation
+      let pron = "";
+      let tempPron = "";
       $(this).find(".pron .ipa").each(function(i, elem) {
+        // Sometimes there's no US pron
+        if(i === 0) {
+          tempPron = $(this).text();
+        }
+        // Only take one (US) pron
         if(i === 1) {
           pron = $(this).text();
-          //console.log(pron);
-          obj.pron = pron;
         }
       });
+      // If there's no US pron, use the temp (UK) pron
+      if(pron === "") obj.pron = tempPron;
+      else obj.pron = pron;
 
+      // Get pronuciation source mp3 url
       let mp3;
       $(this).find(".audio_play_button").each(function(i, elem) {
+        // Only take one (US) mp3
         if(i === 1) {
-          //console.log($(this).attr("data-src-mp3"));
           mp3 = $(this).attr("data-src-mp3");
           obj.mp3 = mp3;
         }
       });
 
+      // Get pos (V, N, adj...)
       let pos = $(this).find("span.pos").first().text();
-      //console.log(pos);
       obj.pos = pos;
 
+      // Get gram (countable, uncountable...)
       let gram = $(this).find("span.gram").first().text();
-      //console.log(gram);
       obj.gram = gram;
 
+      // Get meanings array
       obj.meanings = [];
       $(this).find(".sense-body").each(function(j, elem) {
-        //console.log("  > " + j);
         let meaning = $(this).find("b.def").first().text().trim();
-        //console.log("  > " + meaning);
         let meaningObj = {
           "meaning": meaning,
           "egs": []
         };
 
+        // Get examples array
         $(this).find("span.eg").each(function(k, elem) {
-          //console.log("    > " + k);
           let eg = $(this).text();
-          //console.log("    > " + eg);
           meaningObj.egs.push(eg);
         });
 
@@ -74,48 +89,59 @@ module.exports = {
 
       });
 
-      parts.push(obj);
+      entries.push(obj);
     });
 
-    // check invalid part
-    if(parts.length > 0) {
-      for(let i = parts.length - 1;i >= 0;i--) {
-        if(parts[i].title === null) {
-          parts.splice(i, 1);
+    // Check and remove invalid part
+    if(entries.length > 0) {
+      for(let i = entries.length - 1;i >= 0;i--) {
+        if(entries[i].title === null) {
+          entries.splice(i, 1);
         }
       }
     }
 
-    // check dulplicate part
+    // Check dulplicate part
     let posArray = [];
     let index = 0;
-    for(let i = 0;i < parts.length;i++) {
-      if(posArray.includes(parts[i].pos)) {
+    for(let i = 0;i < entries.length;i++) {
+      if(posArray.includes(entries[i].pos)) {
         index = i;
         break;
       }
-      else posArray.push(parts[i].pos);
+      else posArray.push(entries[i].pos);
     }
-
-    // remove dulplicate part
+    // Remove dulplicate part
     if(index !== 0) {
-      for(let i = parts.length - 1;i >= index;i--) {
-        parts.splice(i, 1);
+      for(let i = entries.length - 1;i >= index;i--) {
+        entries.splice(i, 1);
       }
     }
 
-    //console.log(parts);
-    return parts;
+    return entries;
   },
 
-  parseImages: function(body) {
+  parseGoogleImage: function(body) {
     const $ = cheerio.load(body);
+    //logger(body);
     let arr = [];
+    // Only get 3 images
     $("div a img").slice(0, 3).each(function(i, elem) {
       arr.push($(this).attr("src"));
     });
-    console.log(arr);
+    logger(arr);
     return arr;
+  },
 
+  parseBingImage: function(body) {
+    const $ = cheerio.load(body);
+    //logger(body);
+    let arr = [];
+    // Only get 3 images
+    $("div.content div.row div.item a.thumb").slice(0, 3).each(function(i, elem) {
+      arr.push($(this).attr("href"));
+    });
+    logger(arr);
+    return arr;
   }
 };

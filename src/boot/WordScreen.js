@@ -1,7 +1,7 @@
 import Expo from "expo";
 import React, { Component } from "react";
 import FitImage from "react-native-fit-image";
-import { Container, Content, Card, CardItem, Body, Text, Button, Icon } from "native-base";
+import { Container, Content, Card, CardItem, Body, Text, Button, Icon, Spinner } from "native-base";
 import parser from "../api/DictionaryParser";
 
 const _debug = true;
@@ -9,6 +9,8 @@ const logger = (output) => {
   if(_debug) console.log(output);
   else return;
 };
+
+const word = "okag";
 
 export default class WordScreen extends Component {
 
@@ -18,13 +20,15 @@ export default class WordScreen extends Component {
   };
 
   searchForWord = (word) => {
-    let url = "https://dictionary.cambridge.org/dictionary/english/" + word;
+    const _word = word.replace(" ", "-");
+    let url = "https://dictionary.cambridge.org/dictionary/english/" + _word;
+    logger(url);
     fetch(url).then((response) => {
       return response.text();
     })
     .then((text) => {
 
-      let searchResultArray = parser.parse(text);
+      let searchResultArray = parser.parseCambridgeDictionary(text);
 
       if(searchResultArray.length === 0) {
         logger("Unable to find this word");
@@ -45,14 +49,19 @@ export default class WordScreen extends Component {
 
   searchForImage = (word) => {
 
-    let imageUrl = "https://www.google.com.tw/search?q=" + word + "&tbm=isch";
+    // Don't use google image anymore
+    //let imageUrl = "https://www.google.com.tw/search?q=" + word + "&tbm=isch";
+    // Use Bing image
+    const _word = word.replace(" ", "%20");
+    let imageUrl = "https://www.bing.com/images/search?q=" + _word;
+    logger(imageUrl);
 
     fetch(imageUrl).then((response) => {
       return response.text();
     })
     .then((text) => {
 
-      let searchImageArray = parser.parseImages(text);
+      let searchImageArray = parser.parseBingImage(text);
 
       if(searchImageArray.length === 0) {
         logger("Unable to find this image");
@@ -87,20 +96,27 @@ export default class WordScreen extends Component {
   }
 
   componentDidMount = () => {
-    let word = "belittle";
     this.searchForWord(word);
     this.searchForImage(word);
   }
 
   renderWaitingView = () => {
     return (
-      <Text>Waiting for search result...</Text>
+      <Content padder contentContainerStyle={{ justifyContent: "center", flex: 1 }}>
+        <Spinner color="blue" />
+      </Content>
     );
   }
 
   renderNotFoundView = () => {
     return (
-      <Text>Cannot find this word... Sorry...</Text>
+      <Content padder contentContainerStyle={{ alignItems: "center", justifyContent: "center", flex: 1, flexDirection: "row" }}>
+        <Text>No Match Found.</Text>
+        <Button bordered danger style={{ alignSelf: "center" }}>
+
+          <Text>No Match Found.</Text>
+        </Button>
+      </Content>
     );
   }
 
