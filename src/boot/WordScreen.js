@@ -110,11 +110,10 @@ export default class WordScreen extends Component {
 
   renderNotFoundView = () => {
     return (
-      <Content padder contentContainerStyle={{ alignItems: "center", justifyContent: "center", flex: 1, flexDirection: "row" }}>
-        <Text>No Match Found.</Text>
-        <Button bordered danger style={{ alignSelf: "center" }}>
-
-          <Text>No Match Found.</Text>
+      <Content padder contentContainerStyle={{ justifyContent: "center", flex: 1, flexDirection: "row" }}>
+        <Button bordered style={{ alignSelf: "center" }}>
+          <Icon name="ios-arrow-back" />
+          <Text>No Match Found</Text>
         </Button>
       </Content>
     );
