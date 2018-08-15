@@ -1,4 +1,4 @@
-import Expo from "expo";
+import { Audio } from "expo";
 import React, { Component } from "react";
 import FitImage from "react-native-fit-image";
 import { Container, Content, Card, CardItem, Body, Text, Button, Icon, Spinner } from "native-base";
@@ -10,7 +10,7 @@ const logger = (output) => {
   else return;
 };
 
-const word = "okag";
+const word = "outline";
 
 export default class WordScreen extends Component {
 
@@ -82,7 +82,7 @@ export default class WordScreen extends Component {
 
   playTrack = (url) => {
 
-    let soundObject = new Expo.Audio.Sound();
+    let soundObject = new Audio.Sound();
 
     try {
       soundObject.loadAsync({ uri: "https://dictionary.cambridge.org" + url })
