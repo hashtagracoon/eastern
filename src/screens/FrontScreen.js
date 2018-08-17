@@ -5,7 +5,7 @@ import { StyleProvider, Container, Item, Input, Icon, Text } from "native-base";
 import getTheme from "../theme/components";
 import variables from "../theme/variables/commonColor";
 
-export default class FrontPage extends Component {
+export default class FrontScreen extends Component {
   render() {
     return (
       <StyleProvider style={getTheme(variables)}>

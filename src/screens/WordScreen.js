@@ -10,7 +10,7 @@ const logger = (output) => {
   else return;
 };
 
-const word = "outline";
+//const word = "outline";
 
 export default class WordScreen extends Component {
 
@@ -96,6 +96,8 @@ export default class WordScreen extends Component {
   }
 
   componentDidMount = () => {
+    const word = this.props.navigation.getParam("word", "");
+    logger("get param: " + word);
     this.searchForWord(word);
     this.searchForImage(word);
   }

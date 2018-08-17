@@ -1,9 +1,7 @@
 import * as Expo from "expo";
 import React, { Component } from "react";
 
-import FrontPage from "./FrontPage";
-import SearchScreen from "./SearchScreen";
-import WordScreen from "./WordScreen";
+import App from "../App";
 
 export default class Setup extends Component {
   constructor() {
@@ -29,7 +27,7 @@ export default class Setup extends Component {
       return <Expo.AppLoading />;
     }
     return (
-      <SearchScreen />
+      <App />
     );
   }
 }

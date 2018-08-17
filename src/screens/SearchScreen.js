@@ -31,6 +31,7 @@ export default class SearchScreen extends Component {
     this.setState({ selectedWord }, () => {
       logger("selectedWord is \"" + this.state.selectedWord + "\"");
       this.setInputWord(this.state.selectedWord);
+      this.props.navigation.navigate("Word", { word: this.state.selectedWord });
     });
   }
 
