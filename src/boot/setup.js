@@ -2,6 +2,7 @@ import * as Expo from "expo";
 import React, { Component } from "react";
 
 import App from "../App";
+import FrontScreen from "../screens/FrontScreen";
 
 export default class Setup extends Component {
   constructor() {
@@ -18,13 +19,12 @@ export default class Setup extends Component {
       Roboto: require("native-base/Fonts/Roboto.ttf"),
       Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
       Ionicons: require("@expo/vector-icons/fonts/Ionicons.ttf"),
-      vincHand: require("../../assets/fonts/VINCHAND.ttf")
     });
     this.setState({ isReady: true });
   }
   render() {
     if (!this.state.isReady) {
-      return <Expo.AppLoading />;
+      return <FrontScreen />;
     }
     return (
       <App />

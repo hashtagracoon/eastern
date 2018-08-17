@@ -8,13 +8,16 @@ import WordScreen from "./screens/WordScreen";
 
 const AppNavigator = createStackNavigator(
   {
-    Front: { screen: FrontScreen },
-    Search: { screen: SearchScreen },
+    Search: {
+      screen: SearchScreen,
+      navigationOptions: {
+        header: null
+      }
+    },
     Word: { screen: WordScreen },
   },
   {
-    initialRouteName: "Search",
-    headerMode: "none"
+    initialRouteName: "Search"
   }
 );
 

@@ -113,7 +113,10 @@ export default class WordScreen extends Component {
   renderNotFoundView = () => {
     return (
       <Content padder contentContainerStyle={{ justifyContent: "center", flex: 1, flexDirection: "row" }}>
-        <Button bordered style={{ alignSelf: "center" }}>
+        <Button
+          bordered
+          style={{ alignSelf: "center" }}
+          onPress={ () => this.props.navigation.goBack() }>
           <Icon name="ios-arrow-back" />
           <Text>No Match Found</Text>
         </Button>
@@ -134,7 +137,7 @@ export default class WordScreen extends Component {
             <CardItem bordered>
               <Text>{ entry.pos }{ entry.gram }  </Text>
               <Text>/{ entry.pron }/</Text>
-              <Button transparent onPress={ () => { this.playTrack(entry.mp3) } }>
+              <Button transparent onPress={ () => this.playTrack(entry.mp3) }>
                 <Icon name="ios-volume-up" />
               </Button>
             </CardItem>

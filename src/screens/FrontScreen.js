@@ -1,26 +1,21 @@
 import React, { Component } from "react";
 import { StyleSheet, Image } from "react-native";
-import { StyleProvider, Container, Item, Input, Icon, Text } from "native-base";
-
-import getTheme from "../theme/components";
-import variables from "../theme/variables/commonColor";
+import { Container, Item, Input, Icon, Text } from "native-base";
 
 export default class FrontScreen extends Component {
   render() {
     return (
-      <StyleProvider style={getTheme(variables)}>
-        <Container style={styles.containerStyle}>
-          <Image
-            source={require("../../assets/book.png")}
-            style={styles.imageStyle}
-            />
-            <Text style={styles.titleStyle}>World Dictionary</Text>
-            <Item rounded>
-              <Icon name="ios-search" />
-              <Input placeholder="Search" />
-            </Item>
-        </Container>
-      </StyleProvider>
+      <Container style={styles.containerStyle}>
+        <Image
+          source={require("../../assets/book.png")}
+          style={styles.imageStyle}
+          />
+          <Text style={styles.titleStyle}>World Dictionary</Text>
+          <Item rounded>
+            <Icon name="ios-search" />
+            <Input placeholder="Search"/>
+          </Item>
+      </Container>
     );
   }
 }
@@ -36,7 +31,6 @@ const styles = StyleSheet.create({
     resizeMode: "contain"
   },
   titleStyle: {
-    fontFamily: "vincHand",
     fontSize: 34,
     margin: 5
   },
