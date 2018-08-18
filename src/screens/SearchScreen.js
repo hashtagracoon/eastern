@@ -2,8 +2,8 @@ import { SQLite, FileSystem } from "expo";
 import React, { Component } from "react";
 import { Container } from "native-base";
 
-import SearchBar from "../component/SearchBar";
-import ListView from "../component/ListView";
+import SearchBar from "../components/SearchBar";
+import ListView from "../components/ListView";
 
 const _debug = true;
 const logger = (output) => {
@@ -93,13 +93,13 @@ export default class SearchScreen extends Component {
     return (
       <Container>
         <SearchBar
-          value={this.state.inputWord}
-          getSearchWord={this.setInputWord}
-          getSelectedWord={this.setSelectedWord}
+          inputWord={ this.state.inputWord }
+          setInputWordFromSearchBar={ this.setInputWord }
+          determineSelectedWord={ this.setSelectedWord }
         />
         <ListView
-          items={this.state.autocompleteList}
-          getSelectedWord={this.setSelectedWord}
+          items={ this.state.autocompleteList }
+          determineSelectedWord={ this.setSelectedWord }
         />
       </Container>
     );

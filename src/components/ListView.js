@@ -5,12 +5,13 @@ export default class ListView extends Component {
 
   render() {
     return (
-      <List dataArray={this.props.items}
+      <List dataArray={ this.props.items }
         renderRow={(item) =>
-          <ListItem button onPress={() => this.props.getSelectedWord(item)}>
-            <Text>{item}</Text>
+          <ListItem button onPress={ () => this.props.determineSelectedWord(item) }>
+            <Text>{ item }</Text>
           </ListItem>
       } />
     );
   }
+
 }
