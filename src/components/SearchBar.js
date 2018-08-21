@@ -25,7 +25,9 @@ export default class SearchBar extends Component {
             <Input
               placeholder="Search"
               value={ this.props.inputWord }
-              onChangeText={ this.onChangeText }/>
+              onChangeText={ this.onChangeText }
+              onFocus={ this.props.onFocus }
+            />
             <Button transparent onPress={ this.onPress }>
               <Icon name="send" />
             </Button>

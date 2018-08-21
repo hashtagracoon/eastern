@@ -2,6 +2,7 @@ import { Audio } from "expo";
 import React, { Component } from "react";
 import FitImage from "react-native-fit-image";
 import { Container, Content, Card, CardItem, Body, Text, Button, Icon, Spinner } from "native-base";
+import SearchBar from "../components/SearchBar";
 import parser from "../api/DictionaryParser";
 
 const _debug = true;
@@ -195,6 +196,10 @@ export default class WordScreen extends Component {
     );
   }
 
+  goToPrevPage = () => {
+    this.props.navigation.goBack();
+  }
+
   render() {
     const result = this.state.searchResultArray;
     const images = this.state.searchImageArray;
@@ -219,6 +224,13 @@ export default class WordScreen extends Component {
       return (
         <Container>
           <Content padder>
+
+          <SearchBar
+            inputWord={ this.props.navigation.getParam("word", "") }
+            setInputWordFromSearchBar={ () => {} }
+            determineSelectedWord={ () => {} }
+            onFocus={ this.goToPrevPage }
+          />
 
           { this.renderMainEntries(result) }
 

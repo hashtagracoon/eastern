@@ -1,6 +1,6 @@
 import { SQLite, FileSystem } from "expo";
 import React, { Component } from "react";
-import { Container } from "native-base";
+import { Container, Content } from "native-base";
 
 import SearchBar from "../components/SearchBar";
 import ListView from "../components/ListView";
@@ -17,7 +17,7 @@ export default class SearchScreen extends Component {
     inputWord: "",
     selectedWord: "",
     dbInstance: null,
-    autocompleteList: []
+    autocompleteList: [],
   };
 
   setInputWord = (inputWord) => {
@@ -92,15 +92,18 @@ export default class SearchScreen extends Component {
   render() {
     return (
       <Container>
-        <SearchBar
-          inputWord={ this.state.inputWord }
-          setInputWordFromSearchBar={ this.setInputWord }
-          determineSelectedWord={ this.setSelectedWord }
-        />
-        <ListView
-          items={ this.state.autocompleteList }
-          determineSelectedWord={ this.setSelectedWord }
-        />
+        <Content padder>
+          <SearchBar
+            inputWord={ this.state.inputWord }
+            setInputWordFromSearchBar={ this.setInputWord }
+            determineSelectedWord={ this.setSelectedWord }
+            onFocus={ () => { this.setInputWord(""); } }
+          />
+          <ListView
+            items={ this.state.autocompleteList }
+            determineSelectedWord={ this.setSelectedWord }
+          />
+        </Content>
       </Container>
     );
   }
