@@ -21,31 +21,56 @@ export default class WordScreen extends Component {
   };
 
   searchForWord = (word) => {
+
     const _word = word.replace(" ", "-");
-    let url = "https://dictionary.cambridge.org/dictionary/english/" + _word;
-    logger(url);
-    fetch(url).then((response) => {
-      return response.text();
-    })
-    .then((text) => {
 
-      let searchResultArray = parser.parseCambridgeDictionary(text);
+    try {
+      let url = "https://dictionary.cambridge.org/dictionary/english/" + _word;
+      logger(url);
 
-      if(searchResultArray.length === 0) {
-        logger("Unable to find this word");
+      fetch(url).then((response) => {
+        return response.text();
+      })
+      .then((text) => {
+
+        let searchResultArray = [];//parser.parseCambridgeDictionary(text);
+
+        if(searchResultArray.length === 0) {
+          logger("Unable to find this word");
+        }
+        else {
+          logger("Get Search Result:")
+          logger(searchResultArray);
+        }
+
+        this.setState({ searchResultArray });
+        logger("* state change")
+        logger(this.state.searchResultArray)
+      })
+      .catch((err) => {
+        logger(err);
+      });
+
+      if(this.state.searchResultArray.length === 0) {
+        throw "Cannot find result at Cambridge Dictionary.";
       }
-      else {
-        logger("Get Search Result:")
-        logger(searchResultArray);
-      }
+    }
+    catch(err) {
+      if(!_word.includes("-")) {
 
-      this.setState({ searchResultArray });
-      logger("* state change")
-      logger(this.state.searchResultArray)
-    })
-    .catch((err) => {
-      logger(err);
-    });
+        let url = "https://www.thefreedictionary.com/" + _word;
+
+        fetch(url).then((response) => {
+          return response.text();
+        })
+        .then((text) => {
+          let searchResultArray = parser.parseDictionaryDotCom(text);
+        })
+        .catch((err) => {
+          logger(err);
+        });
+      }
+    }
   }
 
   searchForImage = (word) => {
