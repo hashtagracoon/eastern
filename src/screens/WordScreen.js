@@ -27,7 +27,7 @@ export default class WordScreen extends Component {
     try {
       let url = "https://dictionary.cambridge.org/dictionary/english/" + _word;
       logger(url);
-
+/*
       fetch(url).then((response) => {
         return response.text();
       })
@@ -48,27 +48,49 @@ export default class WordScreen extends Component {
         logger(this.state.searchResultArray)
       })
       .catch((err) => {
-        logger(err);
+        logger("after fetch" + err);
       });
-
+*/
+      this.setState({searchResultArray: []});
       if(this.state.searchResultArray.length === 0) {
+        logger("before throw");
         throw "Cannot find result at Cambridge Dictionary.";
+      }
+      else {
+        logger("hi")
       }
     }
     catch(err) {
+      logger("catch here");
       if(!_word.includes("-")) {
 
+        logger("--- search at dictionary.com ---");
+
         let url = "https://www.thefreedictionary.com/" + _word;
+        logger(url)
 
         fetch(url).then((response) => {
           return response.text();
         })
         .then((text) => {
           let searchResultArray = parser.parseDictionaryDotCom(text);
+
+          if(searchResultArray.length === 0) {
+            logger("Unable to find this word 2");
+          }
+          else {
+            logger("Get Search Result: 2")
+            logger(searchResultArray);
+          }
+
+          this.setState({ searchResultArray });
+          logger("* state change 2")
+          logger(this.state.searchResultArray)
         })
         .catch((err) => {
-          logger(err);
+          logger("after fetch" + err);
         });
+
       }
     }
   }
