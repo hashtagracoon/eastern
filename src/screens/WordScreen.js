@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import FitImage from "react-native-fit-image";
 import { Container, Content, Card, CardItem, Body, Text, Button, Icon, Spinner } from "native-base";
 import SearchBar from "../components/SearchBar";
-import parser from "../api/DictionaryParser";
 import searcher from "../api/SearchWrapper";
 
 const _debug = true;
@@ -68,37 +67,6 @@ export default class WordScreen extends Component {
       this.setState({ searchImageArray: [] });
     });
 
-    // Don't use google image anymore
-    //let imageUrl = "https://www.google.com.tw/search?q=" + word + "&tbm=isch";
-    // Use Bing image
-    /*
-    const _word = word.replace(" ", "%20");
-    let imageUrl = "https://www.bing.com/images/search?q=" + _word;
-    logger(imageUrl);
-
-    fetch(imageUrl).then((response) => {
-      return response.text();
-    })
-    .then((text) => {
-
-      let searchImageArray = parser.parseBingImage(text);
-
-      if(searchImageArray.length === 0) {
-        logger("Unable to find this image");
-      }
-      else {
-        logger("Get Image Result:")
-        logger(searchImageArray);
-      }
-
-      this.setState({ searchImageArray });
-      logger("* state change");
-      logger(this.state.searchImageArray);
-    })
-    .catch((err) => {
-      logger(err);
-    });
-    */
   }
 
   playTrack = (url) => {
