@@ -4,6 +4,7 @@ import FitImage from "react-native-fit-image";
 import { Container, Content, Card, CardItem, Body, Text, Button, Icon, Spinner } from "native-base";
 import SearchBar from "../components/SearchBar";
 import parser from "../api/DictionaryParser";
+import searcher from "../api/SearchWrapper";
 
 const _debug = true;
 const logger = (output) => {
@@ -18,88 +19,59 @@ export default class WordScreen extends Component {
   state = {
     searchResultArray: null,
     searchImageArray: null,
+    searchResultFrom: null
   };
 
   searchForWord = (word) => {
 
-    const _word = word.replace(" ", "-");
+    let _word = word.replace(" ", "-");
 
-    try {
-      let url = "https://dictionary.cambridge.org/dictionary/english/" + _word;
-      logger(url);
-/*
-      fetch(url).then((response) => {
-        return response.text();
-      })
-      .then((text) => {
+    searcher.searchCambridge(_word).then((searchResultArray) => {
+      this.setState({
+        searchResultArray: searchResultArray,
+        searchResultFrom: "Cambridge"
+      });
+    })
+    .catch((err) => {
 
-        let searchResultArray = [];//parser.parseCambridgeDictionary(text);
+      _word = word.replace("-", "%20");
+      searcher.searchWikipedia(_word).then((summary) => {
+        this.setState({
+          searchResultArray: [
+            {
+              "title": word,
+              "meanings": [ {"meaning": summary, "egs": []} ]
+            }
+          ],
+          searchResultFrom: "Wikipedia"
+        })
+        logger(summary);
 
-        if(searchResultArray.length === 0) {
-          logger("Unable to find this word");
-        }
-        else {
-          logger("Get Search Result:")
-          logger(searchResultArray);
-        }
-
-        this.setState({ searchResultArray });
-        logger("* state change")
-        logger(this.state.searchResultArray)
       })
       .catch((err) => {
-        logger("after fetch" + err);
-      });
-*/
-      this.setState({searchResultArray: []});
-      if(this.state.searchResultArray.length === 0) {
-        logger("before throw");
-        throw "Cannot find result at Cambridge Dictionary.";
-      }
-      else {
-        logger("hi")
-      }
-    }
-    catch(err) {
-      logger("catch here");
-      if(!_word.includes("-")) {
-
-        logger("--- search at dictionary.com ---");
-
-        let url = "https://www.thefreedictionary.com/" + _word;
-        logger(url)
-
-        fetch(url).then((response) => {
-          return response.text();
-        })
-        .then((text) => {
-          let searchResultArray = parser.parseDictionaryDotCom(text);
-
-          if(searchResultArray.length === 0) {
-            logger("Unable to find this word 2");
-          }
-          else {
-            logger("Get Search Result: 2")
-            logger(searchResultArray);
-          }
-
-          this.setState({ searchResultArray });
-          logger("* state change 2")
-          logger(this.state.searchResultArray)
-        })
-        .catch((err) => {
-          logger("after fetch" + err);
+        this.setState({
+          searchResultArray: [],
+          searchResultFrom: "NotFound"
         });
+      });
 
-      }
-    }
+    });
+
   }
 
   searchForImage = (word) => {
 
+    searcher.searchImage(word).then((searchImageArray) => {
+      this.setState({ searchImageArray });
+    })
+    .catch((err) => {
+      this.setState({ searchImageArray: [] });
+    });
+
     // Don't use google image anymore
     //let imageUrl = "https://www.google.com.tw/search?q=" + word + "&tbm=isch";
     // Use Bing image
+    /*
     const _word = word.replace(" ", "%20");
     let imageUrl = "https://www.bing.com/images/search?q=" + _word;
     logger(imageUrl);
@@ -126,6 +98,7 @@ export default class WordScreen extends Component {
     .catch((err) => {
       logger(err);
     });
+    */
   }
 
   playTrack = (url) => {
@@ -169,6 +142,27 @@ export default class WordScreen extends Component {
           <Text>No Match Found</Text>
         </Button>
       </Content>
+    );
+  }
+
+  renderWikipediaSummary = (wordEntries) => {
+    return (
+      wordEntries.map((entry, i) => {
+        return (
+          <Card key={ i }>
+            <CardItem header bordered>
+              <Text>{ entry.title }</Text>
+            </CardItem>
+            <CardItem bordered key={ i }>
+              <Body>
+                <Text>
+                  { entry.meanings[0].meaning }
+                </Text>
+              </Body>
+            </CardItem>
+          </Card>
+        );
+      })
     );
   }
 
@@ -250,22 +244,27 @@ export default class WordScreen extends Component {
   render() {
     const result = this.state.searchResultArray;
     const images = this.state.searchImageArray;
+    const resultFrom = this.state.searchResultFrom;
 
-    if(result == null || images == null) {
+    //if(result == null || images == null) {
+    // FIX ME images should have a switch to decide whether to render or not
+    if(resultFrom == null || images == null) {
       return (
         <Container>
           { this.renderWaitingView() }
         </Container>
       );
     }
-    else if(result.length === 0) {
+    //else if(result.length === 0) {
+    else if(resultFrom === "NotFound") {
       return (
         <Container>
           { this.renderNotFoundView() }
         </Container>
       );
     }
-    else {
+    //else {
+    else if(resultFrom === "Cambridge") {
       logger("Can Render Result Now.");
       logger(result);
       return (
@@ -286,6 +285,36 @@ export default class WordScreen extends Component {
           </Content>
         </Container>
       )
+    }
+    else if(resultFrom === "Wikipedia") {
+      logger("Can Render Result Now. (from wiki)");
+      logger(result);
+      return (
+        <Container>
+          <Content padder>
+
+          <SearchBar
+            inputWord={ this.props.navigation.getParam("word", "") }
+            setInputWordFromSearchBar={ () => {} }
+            determineSelectedWord={ () => {} }
+            onFocus={ this.goToPrevPage }
+          />
+
+          { this.renderWikipediaSummary(result) }
+
+          { this.renderImages(images) }
+
+          </Content>
+        </Container>
+      )
+    }
+    // FIX ME is it necessary?
+    else {
+      return (
+        <Container>
+          { this.renderNotFoundView() }
+        </Container>
+      );
     }
   }
 }
