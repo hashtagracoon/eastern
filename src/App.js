@@ -1,6 +1,6 @@
 import React from "react";
 import { Root } from "native-base";
-import { createStackNavigator } from "react-navigation";
+import { createStackNavigator, Animated, Easing } from "react-navigation";
 
 import SearchScreen from "./screens/SearchScreen";
 import WordScreen from "./screens/WordScreen";
@@ -12,7 +12,8 @@ const AppNavigator = createStackNavigator(
   },
   {
     initialRouteName: "Search",
-    headerMode: "none"
+    headerMode: "none",
+    transitions: null
   }
 );
 

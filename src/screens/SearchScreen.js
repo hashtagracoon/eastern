@@ -98,6 +98,7 @@ export default class SearchScreen extends Component {
             setInputWordFromSearchBar={ this.setInputWord }
             determineSelectedWord={ this.setSelectedWord }
             onFocus={ () => { this.setInputWord(""); } }
+            autoFocus={ true }
           />
           <ListView
             items={ this.state.autocompleteList }

@@ -27,6 +27,7 @@ export default class SearchBar extends Component {
               value={ this.props.inputWord }
               onChangeText={ this.onChangeText }
               onFocus={ this.props.onFocus }
+              autoFocus={ this.props.autoFocus }
             />
             <Button transparent onPress={ this.onPress }>
               <Icon name="send" />

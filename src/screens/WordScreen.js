@@ -2,6 +2,7 @@ import { Audio } from "expo";
 import React, { Component } from "react";
 import FitImage from "react-native-fit-image";
 import { Container, Content, Card, CardItem, Body, Text, Button, Icon, Spinner } from "native-base";
+import { StackActions, NavigationActions } from "react-navigation";
 import SearchBar from "../components/SearchBar";
 import searcher from "../api/SearchWrapper";
 
@@ -105,7 +106,7 @@ export default class WordScreen extends Component {
         <Button
           bordered
           style={{ alignSelf: "center" }}
-          onPress={ () => this.props.navigation.goBack() }>
+          onPress={ this.goToSearchScreen }>
           <Icon name="ios-arrow-back" />
           <Text>No Match Found</Text>
         </Button>
@@ -205,8 +206,14 @@ export default class WordScreen extends Component {
     );
   }
 
-  goToPrevPage = () => {
-    this.props.navigation.goBack();
+  goToSearchScreen = () => {
+    const resetAction = StackActions.reset({
+      index: 0,
+      actions: [ NavigationActions.navigate({ routeName: "Search" }) ],
+      key: null
+    });
+
+    this.props.navigation.dispatch(resetAction);
   }
 
   render() {
@@ -214,7 +221,6 @@ export default class WordScreen extends Component {
     const images = this.state.searchImageArray;
     const resultFrom = this.state.searchResultFrom;
 
-    //if(result == null || images == null) {
     // FIX ME images should have a switch to decide whether to render or not
     if(resultFrom == null || images == null) {
       return (
@@ -223,7 +229,6 @@ export default class WordScreen extends Component {
         </Container>
       );
     }
-    //else if(result.length === 0) {
     else if(resultFrom === "NotFound") {
       return (
         <Container>
@@ -231,7 +236,6 @@ export default class WordScreen extends Component {
         </Container>
       );
     }
-    //else {
     else if(resultFrom === "Cambridge") {
       logger("Can Render Result Now.");
       logger(result);
@@ -243,11 +247,19 @@ export default class WordScreen extends Component {
             inputWord={ this.props.navigation.getParam("word", "") }
             setInputWordFromSearchBar={ () => {} }
             determineSelectedWord={ () => {} }
-            onFocus={ this.goToPrevPage }
+            onFocus={ this.goToSearchScreen }
           />
 
           { this.renderMainEntries(result) }
 
+          <Button block>
+            <Icon name="md-arrow-dropdown" />
+            <Text>Show Images</Text>
+          </Button>
+          <Button block>
+            <Icon name="md-arrow-dropup" />
+            <Text>Hide Images</Text>
+          </Button>
           { this.renderImages(images) }
 
           </Content>
@@ -266,6 +278,7 @@ export default class WordScreen extends Component {
             setInputWordFromSearchBar={ () => {} }
             determineSelectedWord={ () => {} }
             onFocus={ this.goToPrevPage }
+            autoFocus={ false }
           />
 
           { this.renderWikipediaSummary(result) }
