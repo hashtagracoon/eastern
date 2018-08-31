@@ -277,7 +277,7 @@ export default class WordScreen extends Component {
             inputWord={ this.props.navigation.getParam("word", "") }
             setInputWordFromSearchBar={ () => {} }
             determineSelectedWord={ () => {} }
-            onFocus={ this.goToPrevPage }
+            onFocus={ this.goToSearchScreen }
             autoFocus={ false }
           />
 

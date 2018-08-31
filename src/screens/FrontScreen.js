@@ -11,10 +11,6 @@ export default class FrontScreen extends Component {
           style={styles.imageStyle}
           />
           <Text style={styles.titleStyle}>World Dictionary</Text>
-          <Item rounded>
-            <Icon name="ios-search" />
-            <Input placeholder="Search"/>
-          </Item>
       </Container>
     );
   }

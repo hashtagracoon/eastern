@@ -76,6 +76,11 @@ export default class SearchScreen extends Component {
           (_, { rows: { _array: lemma } }) => {
             let autocompleteList = lemma.map(obj => obj.lemma);
             logger(autocompleteList);
+
+            if(autocompleteList.length === 0) {
+              autocompleteList.push(word);
+            }
+
             this.setState({ autocompleteList });
           }
         );
