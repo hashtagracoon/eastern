@@ -2,7 +2,7 @@
   "expo": {
     "sdkVersion": "28.0.0",
     "icon": "./assets/nblogo.png",
-    "slug": "nativebasekitchensink",
+    "slug": "eastern",
     "loading": {
       "hideExponentText": true,
       "backgroundImage": "./assets/splashscreen.png"
@@ -11,7 +11,7 @@
     "primaryColor": "#cccccc",
     "packagerOpts": {
       "assetExts": [
-        "ttf"
+        "ttf", "db"
       ]
     },
     "androidStatusBarColor": "#334393",
@@ -19,5 +19,7 @@
       "barStyle": "light-content",
       "backgroundColor": "#334393"
     }
-  }
+  },
+  "name": "eastern",
+  "displayName": "World Dictionary"
 }

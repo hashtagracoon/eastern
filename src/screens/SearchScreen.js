@@ -1,4 +1,4 @@
-import { SQLite, FileSystem } from "expo";
+import { SQLite, FileSystem, Asset } from "expo";
 import React, { Component } from "react";
 import { Container, Content } from "native-base";
 
@@ -18,7 +18,15 @@ export default class SearchScreen extends Component {
     selectedWord: "",
     dbInstance: null,
     autocompleteList: [],
+    showImage: false
   };
+
+  toggleShowImage = (bool) => {
+    this.setState({showImage: bool}, () => {
+      if(this.state.showImage) logger("show image automatically.");
+      else logger("not show image anymore.");
+    });
+  }
 
   setInputWord = (inputWord) => {
     this.setState({ inputWord }, () => {
@@ -31,7 +39,7 @@ export default class SearchScreen extends Component {
     this.setState({ selectedWord }, () => {
       logger("selectedWord is \"" + this.state.selectedWord + "\"");
       this.setInputWord(this.state.selectedWord);
-      this.props.navigation.navigate("Word", { word: this.state.selectedWord });
+      this.props.navigation.navigate("Word", { word: this.state.selectedWord, showImage: this.state.showImage, toggleShowImage: this.toggleShowImage });
     });
   }
 
@@ -39,23 +47,29 @@ export default class SearchScreen extends Component {
 
     const dbFile = FileSystem.documentDirectory + "SQLite/sqlite-31.db";
 
-    FileSystem.getInfoAsync(dbFile).then((exists) => {
-      if (!exists) {
+    FileSystem.getInfoAsync(dbFile).then((res) => {
+      if (!(res.exists)) {
         logger("database file not found, download new database file");
         return FileSystem.downloadAsync(
-          "http://hashtagracoon.pythonanywhere.com/assets/sqlite-31.db",
+          Asset.fromModule(require("../../assets/database/sqlite-31.db")).uri,
           dbFile
         );
       }
       else {
         logger("database file has already been downloaded!");
       }
+      logger("modification time: " + res.modificationTime);
+      logger("size: " + res.size);
+      logger("uri time: " + res.uri);
     })
     .then(() => {
       logger("open database: ");
       const dbInstance = SQLite.openDatabase("sqlite-31.db");
       this.setState({ dbInstance });
       logger(this.state.dbInstance);
+    })
+    .catch((err) => {
+      logger(err);
     });
   }
 

@@ -19,7 +19,8 @@ export default class WordScreen extends Component {
   state = {
     searchResultArray: null,
     searchImageArray: null,
-    searchResultFrom: null
+    searchResultFrom: null,
+    showImage: this.props.navigation.getParam("showImage")
   };
 
   searchForWord = (word) => {
@@ -188,11 +189,42 @@ export default class WordScreen extends Component {
     );
   }
 
+  showImages = () => {
+    this.setState({ showImage: true }, () => {
+      this.props.navigation.getParam("toggleShowImage")(true);
+      logger("showImage = " + this.state.showImage);
+    })
+  }
+
+  hideImages = () => {
+    this.setState({ showImage: false }, () => {
+      this.props.navigation.getParam("toggleShowImage")(false);
+      logger("showImage = " + this.state.showImage);
+    })
+  }
+
   renderImages = (images) => {
+
+    const showImageButton = (
+      <Button block onPress={ this.showImages }>
+        <Icon name="md-arrow-dropdown" />
+        <Text>Show Images</Text>
+      </Button>
+    );
+
+    const hideImageButton = (
+      <Button block onPress={ this.hideImages }>
+        <Icon name="md-arrow-dropup" />
+        <Text>Hide Images</Text>
+      </Button>
+    );
+
     return (
       <Card>
+      { this.state.showImage ? hideImageButton : showImageButton }
       {
         images.map((entry, i) => {
+          if(!this.state.showImage) return;
           logger("render " + entry)
           return (
             <FitImage key={i}
@@ -252,14 +284,6 @@ export default class WordScreen extends Component {
 
           { this.renderMainEntries(result) }
 
-          <Button block>
-            <Icon name="md-arrow-dropdown" />
-            <Text>Show Images</Text>
-          </Button>
-          <Button block>
-            <Icon name="md-arrow-dropup" />
-            <Text>Hide Images</Text>
-          </Button>
           { this.renderImages(images) }
 
           </Content>
