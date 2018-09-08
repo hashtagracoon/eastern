@@ -239,6 +239,8 @@ export default class WordScreen extends Component {
   }
 
   goToSearchScreen = () => {
+    this.props.navigation.goBack();
+    /*
     const resetAction = StackActions.reset({
       index: 0,
       actions: [ NavigationActions.navigate({ routeName: "Search" }) ],
@@ -246,6 +248,7 @@ export default class WordScreen extends Component {
     });
 
     this.props.navigation.dispatch(resetAction);
+    */
   }
 
   render() {
@@ -253,7 +256,6 @@ export default class WordScreen extends Component {
     const images = this.state.searchImageArray;
     const resultFrom = this.state.searchResultFrom;
 
-    // FIX ME images should have a switch to decide whether to render or not
     if(resultFrom == null || images == null) {
       return (
         <Container>
@@ -280,6 +282,7 @@ export default class WordScreen extends Component {
             setInputWordFromSearchBar={ () => {} }
             determineSelectedWord={ () => {} }
             onFocus={ this.goToSearchScreen }
+            selectTextOnFocus={ false }
           />
 
           { this.renderMainEntries(result) }
@@ -303,6 +306,7 @@ export default class WordScreen extends Component {
             determineSelectedWord={ () => {} }
             onFocus={ this.goToSearchScreen }
             autoFocus={ false }
+            selectTextOnFocus={ false }
           />
 
           { this.renderWikipediaSummary(result) }
