@@ -24,7 +24,6 @@ module.exports = {
 
     let entries = [];
     $(".entry-body__el").each(function(i, elem) {
-      logger("entry " + i + " :");
 
       let obj = {};
 

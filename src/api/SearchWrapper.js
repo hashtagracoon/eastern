@@ -37,7 +37,7 @@ module.exports = {
       })
       .catch((err) => {
         logger("search word from cambridge error: " + err);
-        reject("Not Found");
+        reject("Error");
       });
 
     });
@@ -48,23 +48,32 @@ module.exports = {
 
     return new Promise((resolve, reject) => {
 
+      logger("*** search at wiki ***");
+
       const url = "https://en.wikipedia.org/w/api.php?action=opensearch&search=" +
                   word +
                   "&limit=1&namespace=0&format=json";
+
+      logger(url);
+
       fetch(url).then((response) => {
         return response.json();
       })
       .then((json) => {
+        // content summary (text, string)
         if(json[2][0]) {
+          logger("Get Search Result from wiki: ")
+          logger(json[2][0]);
           resolve(json[2][0]);
         }
         else {
+          logger("Unable to find this word at wiki");
           reject("Not Found");
         }
       })
       .catch((err) => {
         logger("search wiki error: " + err);
-        reject("Not Found");
+        reject("Error");
       });
 
     });

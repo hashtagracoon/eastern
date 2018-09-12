@@ -50,10 +50,13 @@ export default class WordScreen extends Component {
 
       })
       .catch((err) => {
-        this.setState({
-          searchResultArray: [],
-          searchResultFrom: "NotFound"
-        });
+        if(err === "Not Found") {
+          this.setState({ searchResultFrom: "NotFound" });
+        }
+        else if(err === "Error") {
+          this.setState({ searchResultFrom: "Error" });
+        }
+        this.setState({ searchResultArray: [] });
       });
 
     });
@@ -110,6 +113,21 @@ export default class WordScreen extends Component {
           onPress={ this.goToSearchScreen }>
           <Icon name="ios-arrow-back" />
           <Text>No Match Found</Text>
+        </Button>
+      </Content>
+    );
+  }
+
+  renderErroView = () => {
+    return (
+      <Content padder contentContainerStyle={{ justifyContent: "center", flex: 1, flexDirection: "row" }}>
+        <Button
+          bordered
+          warning
+          style={{ alignSelf: "center" }}
+          onPress={ this.goToSearchScreen }>
+          <Icon name="ios-arrow-back" />
+          <Text>No Internet Access</Text>
         </Button>
       </Content>
     );
