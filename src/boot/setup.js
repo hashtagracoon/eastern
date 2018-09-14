@@ -4,6 +4,9 @@ import React, { Component } from "react";
 import App from "../App";
 import FrontScreen from "../screens/FrontScreen";
 
+import { Provider } from "react-redux";
+import { store } from "../redux/Store";
+
 export default class Setup extends Component {
   constructor() {
     super();
@@ -27,7 +30,9 @@ export default class Setup extends Component {
       return <FrontScreen />;
     }
     return (
-      <App />
+      <Provider store={ store }>
+        <App />
+      </Provider>
     );
   }
 }

@@ -1,10 +1,13 @@
 import { Audio } from "expo";
 import React, { Component } from "react";
 import FitImage from "react-native-fit-image";
+import { BackHandler } from "react-native";
 import { Container, Content, Card, CardItem, Body, Text, Button, Icon, Spinner } from "native-base";
 import { StackActions, NavigationActions } from "react-navigation";
 import SearchBar from "../components/SearchBar";
 import searcher from "../api/SearchWrapper";
+
+import { connect } from "react-redux";
 
 const _debug = true;
 const logger = (output) => {
@@ -12,16 +15,46 @@ const logger = (output) => {
   else return;
 };
 
-//const word = "outline";
-
-export default class WordScreen extends Component {
+class WordScreen extends Component {
 
   state = {
     searchResultArray: null,
     searchImageArray: null,
     searchResultFrom: null,
-    showImage: this.props.navigation.getParam("showImage")
+    showImage: false
   };
+
+  _didFocusSubscription;
+  _willBlurSubscription;
+
+  constructor(props) {
+    super(props);
+    this._didFocusSubscription = props.navigation.addListener("didFocus", payload => {
+      BackHandler.addEventListener("hardwareBackPress", this.onBackButtonPressAndroid);
+    });
+  }
+
+  componentDidMount() {
+    //const word = this.props.navigation.getParam("word", "");
+    const word = this.props.searchWord;
+    logger("get param: " + word);
+    this.searchForWord(word);
+    this.searchForImage(word);
+    this._willBlurSubscription = this.props.navigation.addListener("willBlur", payload => {
+      BackHandler.removeEventListener("hardwareBackPress", this.onBackButtonPressAndroid);
+    });
+  }
+
+  onBackButtonPressAndroid = () => {
+    logger("hardware back button navigate to search screen!");
+    this.goToSearchScreen();
+    return true;
+  }
+
+  componentWillUnmount() {
+    this._didFocusSubscription && this._didFocusSubscription.remove();
+    this._willBlurSubscription && this._willBlurSubscription.remove();
+  }
 
   searchForWord = (word) => {
 
@@ -88,14 +121,14 @@ export default class WordScreen extends Component {
       logger(err);
     }
   }
-
+/*
   componentDidMount = () => {
     const word = this.props.navigation.getParam("word", "");
     logger("get param: " + word);
     this.searchForWord(word);
     this.searchForImage(word);
   }
-
+*/
   renderWaitingView = () => {
     return (
       <Content padder contentContainerStyle={{ justifyContent: "center", flex: 1 }}>
@@ -118,7 +151,7 @@ export default class WordScreen extends Component {
     );
   }
 
-  renderErroView = () => {
+  renderErrorView = () => {
     return (
       <Content padder contentContainerStyle={{ justifyContent: "center", flex: 1, flexDirection: "row" }}>
         <Button
@@ -200,6 +233,8 @@ export default class WordScreen extends Component {
   renderExamples = (examples) => {
     return (
       examples.map((entry, i) => {
+        // FIXME if there're too many examples, expo would crash
+        if(i > 1) return;
         return (
           <Text style={{ fontStyle: "italic" }} key={ i }>{ entry }</Text>
         )
@@ -209,14 +244,12 @@ export default class WordScreen extends Component {
 
   showImages = () => {
     this.setState({ showImage: true }, () => {
-      this.props.navigation.getParam("toggleShowImage")(true);
       logger("showImage = " + this.state.showImage);
     })
   }
 
   hideImages = () => {
     this.setState({ showImage: false }, () => {
-      this.props.navigation.getParam("toggleShowImage")(false);
       logger("showImage = " + this.state.showImage);
     })
   }
@@ -257,8 +290,7 @@ export default class WordScreen extends Component {
   }
 
   goToSearchScreen = () => {
-    this.props.navigation.goBack();
-    /*
+    //this.props.navigation.goBack();
     const resetAction = StackActions.reset({
       index: 0,
       actions: [ NavigationActions.navigate({ routeName: "Search" }) ],
@@ -266,7 +298,6 @@ export default class WordScreen extends Component {
     });
 
     this.props.navigation.dispatch(resetAction);
-    */
   }
 
   render() {
@@ -288,6 +319,13 @@ export default class WordScreen extends Component {
         </Container>
       );
     }
+    else if(resultFrom === "Error") {
+      return (
+        <Container>
+          { this.renderErrorView() }
+        </Container>
+      );
+    }
     else if(resultFrom === "Cambridge") {
       logger("Can Render Result Now.");
       logger(result);
@@ -300,7 +338,6 @@ export default class WordScreen extends Component {
             setInputWordFromSearchBar={ () => {} }
             determineSelectedWord={ () => {} }
             onFocus={ this.goToSearchScreen }
-            selectTextOnFocus={ false }
           />
 
           { this.renderMainEntries(result) }
@@ -313,7 +350,7 @@ export default class WordScreen extends Component {
     }
     else if(resultFrom === "Wikipedia") {
       logger("Can Render Result Now. (from wiki)");
-      logger(result);
+      //logger(result);
       return (
         <Container>
           <Content padder>
@@ -324,7 +361,6 @@ export default class WordScreen extends Component {
             determineSelectedWord={ () => {} }
             onFocus={ this.goToSearchScreen }
             autoFocus={ false }
-            selectTextOnFocus={ false }
           />
 
           { this.renderWikipediaSummary(result) }
@@ -335,13 +371,13 @@ export default class WordScreen extends Component {
         </Container>
       )
     }
-    // FIX ME is it necessary?
-    else {
-      return (
-        <Container>
-          { this.renderNotFoundView() }
-        </Container>
-      );
-    }
   }
 }
+
+export default connect(
+  (state) => {
+    return {
+      searchWord: state.wordState.searchWord
+    }
+  }
+)(WordScreen);

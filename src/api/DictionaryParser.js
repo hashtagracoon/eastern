@@ -1,6 +1,6 @@
 const cheerio = require("cheerio-without-node-native");
 
-const _debug = true;
+const _debug = false;
 const logger = (output) => {
   if(_debug) console.log(output);
   else return;
@@ -119,5 +119,5 @@ module.exports = {
 
     return entries;
   }
-  
+
 };

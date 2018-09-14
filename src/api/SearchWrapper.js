@@ -1,7 +1,7 @@
 const dictionaryParser = require("./DictionaryParser");
 const imageParser = require("./ImageParser");
 
-const _debug = true;
+const _debug = false;
 const logger = (output) => {
   if(_debug) console.log(output);
   else return;

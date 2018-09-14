@@ -5,28 +5,23 @@ import { Container, Content } from "native-base";
 import SearchBar from "../components/SearchBar";
 import ListView from "../components/ListView";
 
+import { connect } from "react-redux";
+import { setSearchWord } from "../redux/Actions";
+
 const _debug = true;
 const logger = (output) => {
   if(_debug) console.log(output);
   else return;
 };
 
-export default class SearchScreen extends Component {
+class SearchScreen extends Component {
 
   state = {
     inputWord: "",
     selectedWord: "",
     dbInstance: null,
-    autocompleteList: [],
-    showImage: false
+    autocompleteList: []
   };
-
-  toggleShowImage = (bool) => {
-    this.setState({showImage: bool}, () => {
-      if(this.state.showImage) logger("show image automatically.");
-      else logger("not show image anymore.");
-    });
-  }
 
   setInputWord = (inputWord) => {
     this.setState({ inputWord }, () => {
@@ -39,7 +34,8 @@ export default class SearchScreen extends Component {
     this.setState({ selectedWord }, () => {
       logger("selectedWord is \"" + this.state.selectedWord + "\"");
       this.setInputWord(this.state.selectedWord);
-      this.props.navigation.navigate("Word", { word: this.state.selectedWord, showImage: this.state.showImage, toggleShowImage: this.toggleShowImage });
+      this.props.setSearchWord(this.state.selectedWord);
+      this.props.navigation.navigate("Word", { word: this.state.selectedWord });
     });
   }
 
@@ -132,9 +128,8 @@ export default class SearchScreen extends Component {
             inputWord={ this.state.inputWord }
             setInputWordFromSearchBar={ this.setInputWord }
             determineSelectedWord={ this.setSelectedWord }
-            onFocus={ () => { /*this.setInputWord("");*/ } }
+            onFocus={ () => { this.setInputWord(""); } }
             autoFocus={ true }
-            selectTextOnFocus={ true }
           />
           <ListView
             items={ this.state.autocompleteList }
@@ -145,3 +140,14 @@ export default class SearchScreen extends Component {
     );
   }
 }
+
+export default connect(
+  (state) => {
+    return {
+      searchWord: state.wordState.searchWord
+    };
+  },
+  {
+    setSearchWord: setSearchWord
+  }
+)(SearchScreen);

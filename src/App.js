@@ -1,7 +1,7 @@
-import React from "react";
+import React, { Component } from "react";
 import { Root } from "native-base";
-import { createStackNavigator } from "react-navigation";
 
+import { createStackNavigator } from "react-navigation";
 import SearchScreen from "./screens/SearchScreen";
 import WordScreen from "./screens/WordScreen";
 
@@ -17,7 +17,12 @@ const AppNavigator = createStackNavigator(
   }
 );
 
-export default () =>
-  <Root>
-    <AppNavigator />
-  </Root>;
+export default class App extends Component {
+  render() {
+    return (
+      <Root>
+        <AppNavigator />
+      </Root>
+    );
+  }
+}
