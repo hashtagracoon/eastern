@@ -17,6 +17,10 @@ export default class SearchBar extends Component {
     this.props.determineSelectedWord(this.state.inputWord);
   }
 
+  onSubmitEditing = () => {
+    this.props.determineSelectedWord(this.state.inputWord);
+  }
+
   render() {
     return (
         <Header searchBar rounded>
@@ -28,6 +32,7 @@ export default class SearchBar extends Component {
               onChangeText={ this.onChangeText }
               onFocus={ this.props.onFocus }
               autoFocus={ this.props.autoFocus }
+              onSubmitEditing={ this.onSubmitEditing }
             />
             <Button transparent onPress={ this.onPress }>
               <Icon name="send" />

@@ -1,11 +1,26 @@
 const dictionaryParser = require("./DictionaryParser");
 const imageParser = require("./ImageParser");
 
-const _debug = false;
+const _debug = true;
 const logger = (output) => {
   if(_debug) console.log(output);
   else return;
 };
+
+function fetchWithTimeout( url, timeout = 5000 ) {
+    return new Promise( (resolve, reject) => {
+        // Set timeout timer
+        let timer = setTimeout(
+            () => reject( new Error('Request timed out') ),
+            timeout
+        );
+
+        fetch( url ).then(
+            response => resolve( response ),
+            err => reject( err )
+        ).finally( () => clearTimeout(timer) );
+    })
+}
 
 module.exports = {
 
@@ -18,7 +33,7 @@ module.exports = {
       let url = "https://dictionary.cambridge.org/dictionary/english/" + word;
       logger(url);
 
-      fetch(url).then((response) => {
+      fetchWithTimeout(url).then((response) => {
         return response.text();
       })
       .then((text) => {
@@ -56,7 +71,7 @@ module.exports = {
 
       logger(url);
 
-      fetch(url).then((response) => {
+      fetchWithTimeout(url).then((response) => {
         return response.json();
       })
       .then((json) => {
@@ -91,7 +106,7 @@ module.exports = {
       let imageUrl = "https://www.bing.com/images/search?q=" + _word;
       logger(imageUrl);
 
-      fetch(imageUrl).then((response) => {
+      fetchWithTimeout(imageUrl).then((response) => {
         return response.text();
       })
       .then((text) => {
@@ -110,8 +125,8 @@ module.exports = {
 
       })
       .catch((err) => {
-        logger(err);
-        reject("Not Found");
+        logger("search image error: " + err);
+        reject("Error");
       });
 
     });

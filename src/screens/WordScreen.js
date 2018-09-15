@@ -98,10 +98,13 @@ class WordScreen extends Component {
 
   searchForImage = (word) => {
 
+    logger("search for image");
+
     searcher.searchImage(word).then((searchImageArray) => {
       this.setState({ searchImageArray });
     })
     .catch((err) => {
+      logger("search for image error: " + err);
       this.setState({ searchImageArray: [] });
     });
 
