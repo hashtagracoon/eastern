@@ -18,7 +18,9 @@ export default class SearchBar extends Component {
   }
 
   onSubmitEditing = () => {
-    this.props.determineSelectedWord(this.state.inputWord);
+    if(this.state.inputWord !== "") {
+      this.props.determineSelectedWord(this.state.inputWord);
+    }
   }
 
   render() {

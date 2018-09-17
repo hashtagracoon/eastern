@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { StyleSheet, Image } from "react-native";
-import { Container, Item, Input, Icon, Text } from "native-base";
+import { Container, Text } from "native-base";
 
 export default class FrontScreen extends Component {
   render() {
     return (
       <Container style={styles.containerStyle}>
         <Image
-          source={require("../../assets/book.png")}
+          source={require("../../assets/eastern-logo-small.png")}
           style={styles.imageStyle}
           />
           <Text style={styles.titleStyle}>World Dictionary</Text>
@@ -23,11 +23,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   imageStyle: {
-    flex: 0.2,
-    resizeMode: "contain"
+    //flex: 0.8,
+    //resizeMode: "contain"
   },
   titleStyle: {
     fontSize: 34,
-    margin: 5
+    margin: 5,
+    //fontFamily: "Roboto_medium"
   },
 });
