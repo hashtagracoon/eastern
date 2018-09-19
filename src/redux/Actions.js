@@ -4,3 +4,10 @@ export const setSearchWord = (searchWord) => {
     searchWord
   };
 };
+
+export const setDbInstance = (dbInstance) => {
+  return {
+    type: "SET_DB_INSTANCE",
+    dbInstance
+  };
+};

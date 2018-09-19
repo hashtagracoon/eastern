@@ -1,12 +1,12 @@
 import { SQLite, FileSystem, Asset } from "expo";
 import React, { Component } from "react";
-import { Container, Content } from "native-base";
+import { Container, Content, Spinner } from "native-base";
 
 import SearchBar from "../components/SearchBar";
 import ListView from "../components/ListView";
 
 import { connect } from "react-redux";
-import { setSearchWord } from "../redux/Actions";
+import { setSearchWord, setDbInstance } from "../redux/Actions";
 
 const _debug = true;
 const logger = (output) => {
@@ -19,7 +19,7 @@ class SearchScreen extends Component {
   state = {
     inputWord: "",
     selectedWord: "",
-    dbInstance: null,
+    dbInstance: this.props.dbInstance,
     autocompleteList: []
   };
 
@@ -61,11 +61,6 @@ class SearchScreen extends Component {
           })
           .catch((err) => { reject(err); });
         });
-        /*return FileSystem.downloadAsync(
-          //Asset.fromModule(require("../../assets/database/sqlite-31.db")).uri,
-          "https://www.pythonanywhere.com/user/hashtagracoon/files/home/hashtagracoon/assets/sqlite-31.db",
-          dbFile
-        );*/
       }
       else {
         logger("database file has already been downloaded!");
@@ -78,6 +73,7 @@ class SearchScreen extends Component {
       logger("open database: ");
       const dbInstance = SQLite.openDatabase("sqlite-31.db");
       this.setState({ dbInstance });
+      this.props.setDbInstance(dbInstance);
       logger(this.state.dbInstance);
     })
     .catch((err) => {
@@ -121,6 +117,17 @@ class SearchScreen extends Component {
   }
 
   render() {
+
+    if(this.state.dbInstance == null) {
+      return (
+        <Container>
+          <Content>
+            <Spinner color='blue' />
+          </Content>
+        </Container>
+      );
+    }
+
     return (
       <Container>
         <Content padder>
@@ -144,10 +151,12 @@ class SearchScreen extends Component {
 export default connect(
   (state) => {
     return {
-      searchWord: state.wordState.searchWord
+      searchWord: state.wordState.searchWord,
+      dbInstance: state.dbState.dbInstance
     };
   },
   {
-    setSearchWord: setSearchWord
+    setSearchWord: setSearchWord,
+    setDbInstance: setDbInstance
   }
 )(SearchScreen);
