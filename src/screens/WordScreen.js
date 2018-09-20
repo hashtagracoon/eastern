@@ -148,7 +148,7 @@ class WordScreen extends Component {
           style={{ alignSelf: "center" }}
           onPress={ this.goToSearchScreen }>
           <Icon name="ios-arrow-back" />
-          <Text>No Match Found</Text>
+          <Text uppercase={ false }>No Match Found</Text>
         </Button>
       </Content>
     );
@@ -163,7 +163,7 @@ class WordScreen extends Component {
           style={{ alignSelf: "center" }}
           onPress={ this.goToSearchScreen }>
           <Icon name="ios-arrow-back" />
-          <Text>No Internet Access</Text>
+          <Text uppercase={ false }>Error: No Internet Access</Text>
         </Button>
       </Content>
     );

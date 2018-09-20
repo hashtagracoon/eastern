@@ -1,6 +1,6 @@
 import { SQLite, FileSystem, Asset } from "expo";
 import React, { Component } from "react";
-import { Container, Content, Spinner } from "native-base";
+import { Container, Content, Spinner, Text, Button } from "native-base";
 
 import SearchBar from "../components/SearchBar";
 import ListView from "../components/ListView";
@@ -20,7 +20,8 @@ class SearchScreen extends Component {
     inputWord: "",
     selectedWord: "",
     dbInstance: this.props.dbInstance,
-    autocompleteList: []
+    autocompleteList: [],
+    cannotDownloadDatabase: false
   };
 
   setInputWord = (inputWord) => {
@@ -40,6 +41,8 @@ class SearchScreen extends Component {
   }
 
   setupAutocompleteDatabase = () => {
+
+    this.setState({ cannotDownloadDatabase: false });
 
     const dbFile = FileSystem.documentDirectory + "SQLite/sqlite-31.db";
 
@@ -78,6 +81,7 @@ class SearchScreen extends Component {
     })
     .catch((err) => {
       logger(err);
+      this.state.cannotDownloadDatabase = true;
     });
   }
 
@@ -120,11 +124,27 @@ class SearchScreen extends Component {
 
     if(this.state.dbInstance == null) {
       return (
-        <Container>
-          <Content>
-            <Spinner color='blue' />
-          </Content>
-        </Container>
+        <Content padder contentContainerStyle={{ justifyContent: "center", flex: 1 }}>
+          <Button
+            bordered
+            style={{ alignSelf: "center" }}>
+            <Text uppercase={ false }>Syncing Database. Please wait...</Text>
+          </Button>
+          <Spinner color="blue" />
+        </Content>
+      );
+    }
+    else if(this.state.cannotDownloadDatabase === true) {
+      return (
+        <Content padder contentContainerStyle={{ justifyContent: "center", flex: 1, flexDirection: "row" }}>
+          <Button
+            bordered
+            warning
+            style={{ alignSelf: "center" }}
+            onPress={ this.setupAutocompleteDatabase }>
+            <Text uppercase={ false }>Error: No Internet Access, Press to Retry</Text>
+          </Button>
+        </Content>
       );
     }
 
