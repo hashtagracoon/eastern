@@ -26,8 +26,12 @@
       "assets/eastern-logo.png",
       "assets/eastern-logo-small.png",
       "assets/splashscreen.png"
-    ]
-  },
-  "name": "Illustrated World Dictionary",
-  "displayName": "Illustrated World Dictionary"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.hashtagracoon.eastern"
+    },
+    "android": {
+      "package": "com.hashtagracoon.eastern"
+    }
+  }
 }

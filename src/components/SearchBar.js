@@ -14,7 +14,9 @@ export default class SearchBar extends Component {
   }
 
   onPress = () => {
-    this.props.determineSelectedWord(this.state.inputWord);
+    if(this.state.inputWord !== "") {
+      this.props.determineSelectedWord(this.state.inputWord);
+    }
   }
 
   onSubmitEditing = () => {
@@ -36,9 +38,7 @@ export default class SearchBar extends Component {
               autoFocus={ this.props.autoFocus }
               onSubmitEditing={ this.onSubmitEditing }
             />
-            <Button transparent onPress={ this.onPress }>
-              <Icon name="send" />
-            </Button>
+              <Icon name="md-send" onPress={ this.onPress }/>
           </Item>
         </Header>
     );

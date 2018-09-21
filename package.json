@@ -46,6 +46,7 @@
     "react-native-sound": "^0.10.9",
     "react-navigation": "^2.0.1",
     "react-navigation-backhandler": "^1.1.1",
+    "react-navigation-transitions": "^1.0.5",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
     "stream": "0.0.2"

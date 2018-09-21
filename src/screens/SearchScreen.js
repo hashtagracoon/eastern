@@ -150,14 +150,14 @@ class SearchScreen extends Component {
 
     return (
       <Container>
+        <SearchBar
+          inputWord={ this.state.inputWord }
+          setInputWordFromSearchBar={ this.setInputWord }
+          determineSelectedWord={ this.setSelectedWord }
+          onFocus={ () => { this.setInputWord(""); } }
+          autoFocus={ true }
+        />
         <Content padder>
-          <SearchBar
-            inputWord={ this.state.inputWord }
-            setInputWordFromSearchBar={ this.setInputWord }
-            determineSelectedWord={ this.setSelectedWord }
-            onFocus={ () => { this.setInputWord(""); } }
-            autoFocus={ true }
-          />
           <ListView
             items={ this.state.autocompleteList }
             determineSelectedWord={ this.setSelectedWord }

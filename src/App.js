@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Root } from "native-base";
 
 import { createStackNavigator } from "react-navigation";
+import { fromLeft } from "react-navigation-transitions";
 import SearchScreen from "./screens/SearchScreen";
 import WordScreen from "./screens/WordScreen";
 
@@ -13,7 +14,7 @@ const AppNavigator = createStackNavigator(
   {
     initialRouteName: "Search",
     headerMode: "none",
-    transitions: null
+    transitionConfig: () => fromLeft()
   }
 );
 

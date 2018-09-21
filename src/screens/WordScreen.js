@@ -222,7 +222,7 @@ class WordScreen extends Component {
         return (
           <CardItem bordered key={ i }>
             <Body>
-              <Text style={{ fontWeight: "bold" }}>{ entry.meaning }</Text>
+              <Text style={{ fontWeight: "bold", marginBottom: 8, lineHeight: 22 }}>{ entry.meaning }</Text>
 
               { this.renderExamples(entry.egs) }
 
@@ -239,7 +239,7 @@ class WordScreen extends Component {
         // FIXME if there're too many examples, expo would crash
         if(i > 1) return;
         return (
-          <Text style={{ fontStyle: "italic" }} key={ i }>{ entry }</Text>
+          <Text style={{ fontStyle: "italic", marginBottom: 8, lineHeight: 22 }} key={ i }>{ entry }</Text>
         )
       })
     );
@@ -334,14 +334,13 @@ class WordScreen extends Component {
       logger(result);
       return (
         <Container>
-          <Content padder>
-
           <SearchBar
             inputWord={ this.props.navigation.getParam("word", "") }
             setInputWordFromSearchBar={ () => {} }
             determineSelectedWord={ () => {} }
             onFocus={ this.goToSearchScreen }
           />
+          <Content padder>
 
           { this.renderMainEntries(result) }
 
@@ -356,8 +355,6 @@ class WordScreen extends Component {
       //logger(result);
       return (
         <Container>
-          <Content padder>
-
           <SearchBar
             inputWord={ this.props.navigation.getParam("word", "") }
             setInputWordFromSearchBar={ () => {} }
@@ -365,6 +362,7 @@ class WordScreen extends Component {
             onFocus={ this.goToSearchScreen }
             autoFocus={ false }
           />
+          <Content padder>
 
           { this.renderWikipediaSummary(result) }
 
