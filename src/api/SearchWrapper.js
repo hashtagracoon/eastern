@@ -7,7 +7,7 @@ function fetchWithTimeout( url, timeout = 7500 ) {
     return new Promise( (resolve, reject) => {
         // Set timeout timer
         let timer = setTimeout(
-            () => reject( new Error('Request timed out') ),
+            () => reject( new Error("Request timed out") ),
             timeout
         );
 
@@ -15,7 +15,7 @@ function fetchWithTimeout( url, timeout = 7500 ) {
             response => resolve( response ),
             err => reject( err )
         ).finally( () => clearTimeout(timer) );
-    })
+    });
 }
 
 module.exports = {
@@ -41,7 +41,7 @@ module.exports = {
           reject("Not Found");
         }
         else {
-          logger("Get Search Result from cambridge: ")
+          logger("Get Search Result from cambridge: ");
           logger(searchResultArray);
           resolve(searchResultArray);
         }

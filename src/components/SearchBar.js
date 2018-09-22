@@ -32,6 +32,7 @@ export default class SearchBar extends Component {
             <Icon name="ios-search" />
             <Input
               placeholder="Search"
+              autoCorrect={ false }
               value={ this.props.inputWord }
               onChangeText={ this.onChangeText }
               onFocus={ this.props.onFocus }
