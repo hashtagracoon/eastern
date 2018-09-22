@@ -8,11 +8,7 @@ import ListView from "../components/ListView";
 import { connect } from "react-redux";
 import { setSearchWord, setDbInstance } from "../redux/Actions";
 
-const _debug = true;
-const logger = (output) => {
-  if(_debug) console.log(output);
-  else return;
-};
+import { logger } from "../api/Debugger";
 
 class SearchScreen extends Component {
 

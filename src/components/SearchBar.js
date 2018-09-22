@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Header, Item, Input, Icon, Button } from "native-base";
+import { Header, Item, Input, Icon } from "native-base";
 
 export default class SearchBar extends Component {
 
@@ -38,7 +38,7 @@ export default class SearchBar extends Component {
               autoFocus={ this.props.autoFocus }
               onSubmitEditing={ this.onSubmitEditing }
             />
-              <Icon name="md-send" onPress={ this.onPress }/>
+            <Icon name="md-send" onPress={ this.onPress }/>
           </Item>
         </Header>
     );

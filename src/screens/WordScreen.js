@@ -9,11 +9,7 @@ import searcher from "../api/SearchWrapper";
 
 import { connect } from "react-redux";
 
-const _debug = true;
-const logger = (output) => {
-  if(_debug) console.log(output);
-  else return;
-};
+import { logger } from "../api/Debugger";
 
 class WordScreen extends Component {
 

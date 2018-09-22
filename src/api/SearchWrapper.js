@@ -1,13 +1,9 @@
 const dictionaryParser = require("./DictionaryParser");
 const imageParser = require("./ImageParser");
 
-const _debug = true;
-const logger = (output) => {
-  if(_debug) console.log(output);
-  else return;
-};
+import { logger } from "./Debugger";
 
-function fetchWithTimeout( url, timeout = 5000 ) {
+function fetchWithTimeout( url, timeout = 7500 ) {
     return new Promise( (resolve, reject) => {
         // Set timeout timer
         let timer = setTimeout(

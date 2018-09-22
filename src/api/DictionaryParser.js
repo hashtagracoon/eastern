@@ -1,10 +1,5 @@
 const cheerio = require("cheerio-without-node-native");
-
-const _debug = false;
-const logger = (output) => {
-  if(_debug) console.log(output);
-  else return;
-};
+import { logger } from "./Debugger";
 
 module.exports = {
 
