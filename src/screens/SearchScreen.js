@@ -10,6 +10,9 @@ import { setSearchWord, setDbInstance } from "../redux/Actions";
 
 import { logger } from "../api/Debugger";
 
+const dbFileMd5 = "1a21d894f05af7fcb7106777c138e0db";
+const dbFileSize = 1162240;
+
 class SearchScreen extends Component {
 
   state = {
@@ -17,7 +20,8 @@ class SearchScreen extends Component {
     selectedWord: "",
     dbInstance: this.props.dbInstance,
     autocompleteList: [],
-    cannotDownloadDatabase: false
+    cannotDownloadDatabase: false,
+    DownloadDatabaseProgress: null
   };
 
   setInputWord = (inputWord) => {
@@ -42,18 +46,32 @@ class SearchScreen extends Component {
 
     const dbFile = FileSystem.documentDirectory + "SQLite/sqlite-31.db";
 
-    FileSystem.getInfoAsync(dbFile).then((res) => {
+    FileSystem.getInfoAsync(dbFile, { md5: true }).then((res) => {
+
+      const downloadResumable = FileSystem.createDownloadResumable(
+        Asset.fromModule(require("../../assets/database/sqlite-31.db")).uri,
+        dbFile,
+        {},
+        (info) => { this.setState({ DownloadDatabaseProgress:  Math.round(info.totalBytesWritten / dbFileSize * 100) + "%" }); }
+      );
+
+      if (res.exists && (res.md5 !== dbFileMd5)) {
+        logger("database file corrupt, delete and download new database file");
+        return new Promise((resolve, reject) => {
+          FileSystem.deleteAsync(dbFile)
+          .then(() => {
+            downloadResumable.downloadAsync()
+            .then(() => { resolve(); })
+            .catch((err) => { reject(err); });
+          })
+          .catch((err) => { reject(err); });
+        });
+      }
       if (!res.exists) {
         logger("database file not found, download new database file");
         return new Promise((resolve, reject) => {
           FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + "SQLite")
           .then(() => {
-            const downloadResumable = FileSystem.createDownloadResumable(
-              Asset.fromModule(require("../../assets/database/sqlite-31.db")).uri,
-              dbFile,
-              {},
-              () => {}
-            );
             downloadResumable.downloadAsync()
             .then(() => { resolve(); })
             .catch((err) => { reject(err); });
@@ -63,6 +81,7 @@ class SearchScreen extends Component {
       }
       else {
         logger("database file has already been downloaded!");
+        logger("md5: " + res.md5);
       }
       logger("modification time: " + res.modificationTime);
       logger("size: " + res.size);
@@ -124,7 +143,7 @@ class SearchScreen extends Component {
           <Button
             bordered
             style={{ alignSelf: "center" }}>
-            <Text uppercase={ false }>Syncing Database. Please wait...</Text>
+            <Text uppercase={ false }>Syncing Database. Please wait... { this.state.DownloadDatabaseProgress }</Text>
           </Button>
           <Spinner color="blue" />
         </Content>

@@ -2,7 +2,7 @@
   "expo": {
     "sdkVersion": "28.0.0",
     "icon": "./assets/eastern-logo.png",
-    "name": "Illustrated World Dictionary",
+    "name": "Dictionary",
     "slug": "eastern",
     "orientation": "portrait",
     "primaryColor": "#cccccc",
@@ -31,7 +31,8 @@
       "bundleIdentifier": "com.hashtagracoon.eastern"
     },
     "android": {
-      "package": "com.hashtagracoon.eastern"
+      "package": "com.hashtagracoon.eastern",
+      "permissions": []
     }
   }
 }
