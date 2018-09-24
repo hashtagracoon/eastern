@@ -155,7 +155,7 @@ class WordScreen extends Component {
       <Content padder contentContainerStyle={{ justifyContent: "center", flex: 1, flexDirection: "row" }}>
         <Button
           bordered
-          warning
+          error
           style={{ alignSelf: "center" }}
           onPress={ this.goToSearchScreen }>
           <Icon name="ios-arrow-back" />
