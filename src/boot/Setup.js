@@ -7,6 +7,8 @@ import App from "../App";
 import { Provider } from "react-redux";
 import { store } from "../redux/Store";
 
+import { logger } from "../api/Debugger";
+
 export default class Setup extends Component {
 
   state = {

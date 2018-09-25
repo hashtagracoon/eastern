@@ -11,7 +11,6 @@ import { setSearchWord, setDbInstance } from "../redux/Actions";
 import { logger } from "../api/Debugger";
 
 const dbFileMd5 = "1a21d894f05af7fcb7106777c138e0db";
-const dbFileSize = 1162240;
 
 class SearchScreen extends Component {
 
@@ -40,52 +39,57 @@ class SearchScreen extends Component {
     });
   }
 
-  setupAutocompleteDatabase = () => {
+  async setupAutocompleteDatabase() {
 
     this.setState({ cannotDownloadDatabase: false });
 
     const dbFile = FileSystem.documentDirectory + "SQLite/sqlite-31.db";
 
-    FileSystem.getInfoAsync(dbFile, { md5: true }).then((res) => {
+    await Asset.loadAsync(require("../../assets/database/sqlite-31.db"));
+    const dbAsset = Asset.fromModule(require("../../assets/database/sqlite-31.db"));
+    logger("load db asset successful.");
+    logger(dbAsset.name);
+    logger(dbAsset.type);
+    logger(dbAsset.uri);
+    logger(dbAsset.localUri);
 
-      const downloadResumable = FileSystem.createDownloadResumable(
-        Asset.fromModule(require("../../assets/database/sqlite-31.db")).uri,
-        dbFile,
-        {},
-        (info) => { this.setState({ DownloadDatabaseProgress:  Math.round(info.totalBytesWritten / dbFileSize * 100) + "%" }); }
-      );
+    FileSystem.getInfoAsync(dbFile, { md5: true }).then((res) => {
 
       if (res.exists && (res.md5 !== dbFileMd5)) {
         logger("database file corrupt, delete and download new database file");
         return new Promise((resolve, reject) => {
-          FileSystem.deleteAsync(dbFile)
-          .then(() => {
-            downloadResumable.downloadAsync()
+          FileSystem.deleteAsync(dbFile, { idempotent: true })
+          .finally(() => {
+            FileSystem.copyAsync({
+              from: dbAsset.localUri,
+              to: dbFile
+            })
             .then(() => { resolve(); })
             .catch((err) => { reject(err); });
-          })
-          .catch((err) => { reject(err); });
+          });
         });
       }
-      if (!res.exists) {
+      else if (!res.exists) {
         logger("database file not found, download new database file");
         return new Promise((resolve, reject) => {
           FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + "SQLite")
-          .then(() => {
-            downloadResumable.downloadAsync()
+          .finally(() => {
+            FileSystem.copyAsync({
+              from: dbAsset.localUri,
+              to: dbFile
+            })
             .then(() => { resolve(); })
             .catch((err) => { reject(err); });
-          })
-          .catch((err) => { reject(err); });
+          });
         });
       }
       else {
         logger("database file has already been downloaded!");
         logger("md5: " + res.md5);
+        logger("modification time: " + res.modificationTime);
+        logger("size: " + res.size);
+        logger("uri: " + res.uri);
       }
-      logger("modification time: " + res.modificationTime);
-      logger("size: " + res.size);
-      logger("uri time: " + res.uri);
     })
     .then(() => {
       logger("open database: ");
@@ -154,7 +158,7 @@ class SearchScreen extends Component {
         <Content padder contentContainerStyle={{ justifyContent: "center", flex: 1, flexDirection: "row" }}>
           <Button
             bordered
-            warning
+            error
             style={{ alignSelf: "center" }}
             onPress={ this.setupAutocompleteDatabase }>
             <Text uppercase={ false }>Error: No Internet Access, Press to Retry</Text>
