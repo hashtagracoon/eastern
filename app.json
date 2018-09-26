@@ -22,7 +22,8 @@
       "image": "./assets/splashscreen.png"
     },
     "assetBundlePatterns": [
-      "assets/database/*",
+      "assets/database/**",
+      "assets/fonts/**",
       "assets/eastern-logo.png",
       "assets/eastern-logo-small.png",
       "assets/splashscreen.png"

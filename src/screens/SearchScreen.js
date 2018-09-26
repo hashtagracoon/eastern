@@ -55,7 +55,8 @@ class SearchScreen extends Component {
 
     FileSystem.getInfoAsync(dbFile, { md5: true }).then((res) => {
 
-      if (res.exists && (res.md5 !== dbFileMd5)) {
+      // no need to check correctness if just copy local file instead of download
+      /*if (res.exists && (res.md5 !== dbFileMd5)) {
         logger("database file corrupt, delete and download new database file");
         return new Promise((resolve, reject) => {
           FileSystem.deleteAsync(dbFile, { idempotent: true })
@@ -69,7 +70,7 @@ class SearchScreen extends Component {
           });
         });
       }
-      else if (!res.exists) {
+      else */if (!res.exists) {
         logger("database file not found, download new database file");
         return new Promise((resolve, reject) => {
           FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + "SQLite")
@@ -158,10 +159,10 @@ class SearchScreen extends Component {
         <Content padder contentContainerStyle={{ justifyContent: "center", flex: 1, flexDirection: "row" }}>
           <Button
             bordered
-            error
+            danger
             style={{ alignSelf: "center" }}
             onPress={ this.setupAutocompleteDatabase }>
-            <Text uppercase={ false }>Error: No Internet Access, Press to Retry</Text>
+            <Text uppercase={ false }>Error: No No Network Connection, Press to Retry</Text>
           </Button>
         </Content>
       );

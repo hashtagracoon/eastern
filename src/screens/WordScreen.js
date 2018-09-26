@@ -155,11 +155,11 @@ class WordScreen extends Component {
       <Content padder contentContainerStyle={{ justifyContent: "center", flex: 1, flexDirection: "row" }}>
         <Button
           bordered
-          error
+          danger
           style={{ alignSelf: "center" }}
           onPress={ this.goToSearchScreen }>
           <Icon name="ios-arrow-back" />
-          <Text uppercase={ false }>Error: No Internet Access</Text>
+          <Text uppercase={ false }>Error: No Network Connection</Text>
         </Button>
       </Content>
     );
@@ -187,6 +187,25 @@ class WordScreen extends Component {
   }
 
   renderMainEntries = (wordEntries) => {
+
+    const renderPron = (pron) => {
+      if(pron !== "") {
+        return (
+          <Text>/{ pron }/</Text>
+        );
+      }
+    };
+
+    const renderMp3 = (mp3) => {
+      if(mp3 != null) {
+        return (
+          <Button transparent onPress={ () => this.playTrack(mp3) }>
+            <Icon name="ios-volume-up" />
+          </Button>
+        );
+      }
+    };
+
     return (
       wordEntries.map((entry, i) => {
         return (
@@ -198,10 +217,8 @@ class WordScreen extends Component {
 
             <CardItem bordered>
               <Text>{ entry.pos }{ entry.gram }  </Text>
-              <Text>/{ entry.pron }/</Text>
-              <Button transparent onPress={ () => this.playTrack(entry.mp3) }>
-                <Icon name="ios-volume-up" />
-              </Button>
+              { renderPron(entry.pron) }
+              { renderMp3(entry.mp3) }
             </CardItem>
 
             { this.renderMeanings(entry.meanings) }
