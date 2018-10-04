@@ -4,6 +4,7 @@ import FitImage from "react-native-fit-image";
 import { BackHandler } from "react-native";
 import { Container, Content, Card, CardItem, Body, Text, Button, Icon, Spinner } from "native-base";
 import { StackActions, NavigationActions } from "react-navigation";
+import { AdMobBanner } from "expo";
 import SearchBar from "../components/SearchBar";
 import searcher from "../api/SearchWrapper";
 
@@ -258,6 +259,17 @@ class WordScreen extends Component {
     );
   }
 
+  renderAds = () => {
+    return (
+      <Card>
+        <AdMobBanner
+          bannerSize="smartBannerPortrait"
+          adUnitID="ca-app-pub-4788516135632439/5282164079"
+          didFailToReceiveAdWithError={ () => { logger("admob error"); } }/>
+      </Card>
+    );
+  }
+
   showImages = () => {
     this.setState({ showImage: true }, () => {
       logger("showImage = " + this.state.showImage);
@@ -359,6 +371,8 @@ class WordScreen extends Component {
 
           { this.renderImages(images) }
 
+          { this.renderAds() }
+
           </Content>
         </Container>
       )
@@ -380,6 +394,8 @@ class WordScreen extends Component {
           { this.renderWikipediaSummary(result) }
 
           { this.renderImages(images) }
+
+          { this.renderAds() }
 
           </Content>
         </Container>
