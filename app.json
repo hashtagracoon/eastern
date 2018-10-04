@@ -33,6 +33,7 @@
     },
     "android": {
       "package": "com.hashtagracoon.eastern",
+      "versionCode": 2,
       "permissions": []
     }
   }
