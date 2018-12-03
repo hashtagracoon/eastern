@@ -12,6 +12,8 @@ import { connect } from "react-redux";
 
 import { logger } from "../api/Debugger";
 
+import to from '../api/To';
+
 class WordScreen extends Component {
 
   state = {
@@ -53,10 +55,63 @@ class WordScreen extends Component {
     this._willBlurSubscription && this._willBlurSubscription.remove();
   }
 
-  searchForWord = (word) => {
+  searchForWord = async (word) => {
 
     let _word = word.replace(" ", "-");
 
+    let searchResultArray = null;
+    let err = null;
+
+    [err, searchResultArray] = await to(searcher.searchCambridge(_word));
+    if(!err) {
+      this.setState({
+        searchResultArray: searchResultArray,
+        searchResultFrom: "Cambridge"
+      });
+      return;
+    }
+
+    searchResultArray = null;
+    err = null;
+    _word = word.replace("-", "%20");
+
+    [err, searchResultArray] = await to(searcher.searchWebster(_word));
+    if(!err) {
+      this.setState({
+        searchResultArray: searchResultArray,
+        searchResultFrom: "Webster"
+      });
+      return;
+    }
+
+    let summary = null;
+    err = null;
+
+    [err, summary] = await to(searcher.searchWikipedia(_word));
+    if(!err) {
+      this.setState({
+        searchResultArray: [
+          {
+            "title": word,
+            "meanings": [ {"meaning": summary, "egs": []} ]
+          }
+        ],
+        searchResultFrom: "Wikipedia"
+      });
+      return;
+    }
+
+    if(err) {
+      if(err === "Not Found") {
+        this.setState({ searchResultFrom: "NotFound" });
+      }
+      else if(err === "Error") {
+        this.setState({ searchResultFrom: "Error" });
+      }
+      this.setState({ searchResultArray: [] });
+      return;
+    }
+/*
     searcher.searchCambridge(_word).then((searchResultArray) => {
       this.setState({
         searchResultArray: searchResultArray,
@@ -90,7 +145,7 @@ class WordScreen extends Component {
       });
 
     });
-
+*/
   }
 
   searchForImage = (word) => {
@@ -112,7 +167,7 @@ class WordScreen extends Component {
     let soundObject = new Audio.Sound();
 
     try {
-      soundObject.loadAsync({ uri: "https://dictionary.cambridge.org" + url })
+      soundObject.loadAsync({ uri: url })
       .then(() => {
         soundObject.playAsync();
       });
@@ -354,7 +409,7 @@ class WordScreen extends Component {
         </Container>
       );
     }
-    else if(resultFrom === "Cambridge") {
+    else if(resultFrom === "Cambridge" || resultFrom === "Webster") {
       logger("Can Render Result Now.");
       logger(result);
       return (

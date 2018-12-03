@@ -52,7 +52,7 @@ module.exports = {
         // Only take one (US) mp3
         if(i === 1) {
           mp3 = $(this).attr("data-src-mp3");
-          obj.mp3 = mp3;
+          obj.mp3 = "https://dictionary.cambridge.org" + mp3;
         }
       });
 
@@ -110,6 +110,88 @@ module.exports = {
       for(let i = entries.length - 1;i >= index;i--) {
         entries.splice(i, 1);
       }
+    }
+
+    return entries;
+  },
+
+  parseWebster: function(body) {
+
+    let $ = cheerio.load(body);
+
+    let titleArray = [];
+    $('.row.entry-header .hword').each(function(i, elem) {
+      logger($(this).text());
+      titleArray.push($(this).text());
+    });
+
+    let posArray = [];
+    $('.row.entry-header span.fl a.important-blue-link').each(function(i, elem) {
+      logger($(this).text());
+      posArray.push($(this).text());
+    });
+
+    let pronArray = [];
+    $('span.prs span.pr').not(':has(span)').each(function(i, elem) {
+      if($(this).prev().text() === '\\') {
+        logger($(this).text());
+        pronArray.push($(this).text());
+      }
+    });
+
+    let mp3Array = [];
+    $('a.play-pron.hw-play-pron').each(function(i, elem) {
+      let data_lang = $(this).attr('data-lang').split('_');
+      let data_file = $(this).attr('data-file');
+      let data_dir = $(this).attr('data-dir');
+      mp3Array.push(`https://media.merriam-webster.com/audio/prons/${data_lang[0]}/${data_lang[1]}/mp3/${data_dir}/${data_file}.mp3`);
+      logger(mp3Array[mp3Array.length - 1]);
+    });
+
+    let meaningsArray = [];
+    const limitLength = 2;
+    for(let i = 1; i <= limitLength; i++) {
+      // each entry-1, entry-2 is a different pos (verb, noun...)
+      // each .sb is a different meaning
+      logger('+++++++++++++++++++++++++++++++');
+      let meanings = [];
+      $(`#dictionary-entry-${i} .vg .sb`).each(function(i, elem) {
+        for(let j = 0; j < limitLength; j++) {
+          logger(`<${j}>`);
+          // each .sb-0, .sb-1 is a different sub-meaning
+          let entry = $(this).find(`span.sb-${j}`).find('span .dtText').first().text();
+          entry = entry.split('\n');
+          entry = entry[0];
+          if(entry.startsWith(': ')) entry = entry.slice(2);
+          logger('meaning: ' + entry);
+
+          let example = $(this).find(`span.sb-${j} .ex-sent`).text();
+          logger('example: ' + example);
+
+          if(entry) {
+            meanings.push({meaning: entry, egs: [example]});
+          }
+
+          logger('=======');
+        }
+      });
+
+      if(meanings.length) {
+        meaningsArray.push(meanings);
+      }
+
+    }
+
+    let entries = [];
+    for(let i = 0; i < meaningsArray.length; i++) {
+      entries.push({
+        title: titleArray[i],
+        pron: pronArray[i],
+        mp3: mp3Array[i],
+        pos: posArray[i],
+        gram: null,
+        meanings: meaningsArray[i]
+      });
     }
 
     return entries;
